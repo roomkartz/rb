@@ -103,5 +103,32 @@ router.delete("/delete-property/:propertyId", verifyFirebaseToken, async (req, r
     res.status(500).json({ error: "Failed to delete property" });
   }
 });
+router.post("/owner", async (req, res) => {
+  const { uid, phoneNumber, role } = req.body;
 
+  try {
+    // Check if already exists
+    const existing = await User.findOne({ uid });
+    if (existing) {
+      return res.status(200).json({ message: "Owner already exists", user: existing });
+    }
+
+    // Save new owner
+    const newOwner = new User({
+      uid,
+      phoneNumber,
+      role: role || "owner",
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    await newOwner.save();
+
+    res.status(201).json({ message: "Owner created", user: newOwner });
+  } catch (error) {
+    console.error("Failed to create owner:", error);
+    res.status(500).json({ error: "Failed to save owner" });
+  }
+});
 export default router;
