@@ -17,11 +17,11 @@ const propertySchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const userSchema = new mongoose.Schema({
-  uid: { type: String, required: true, unique: true }, // From Firebase Auth
-  email: { type: String },                             // Optional from Firebase
-  phoneNumber: { type: String },                       // Optional from Firebase
-  role: { type: String, enum: ['user', 'owner'], required: true }, // Required role
-  properties: [propertySchema],                        // Only for owners
+  uid: { type: String, required: true, unique: true },
+  email: { type: String },
+  phoneNumber: { type: String },
+  role: { type: String, enum: ['user', 'owner'], required: true },
+  properties: [propertySchema],
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);

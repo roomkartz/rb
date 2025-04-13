@@ -1,10 +1,9 @@
 import express from "express";
 import User from "../models/UserModel.js";
-import verifyFirebaseToken from "../middleware/auth.js"; // Verifies Firebase ID token and attaches `req.user`
+import verifyFirebaseToken from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Get all users (admin usage, optional)
 router.get("/all-users", async (req, res) => {
   try {
     const users = await User.find({}, "displayName phoneNumber role isActive");
@@ -14,7 +13,6 @@ router.get("/all-users", async (req, res) => {
   }
 });
 
-// Get authenticated user profile
 router.get("/profile", verifyFirebaseToken, async (req, res) => {
   try {
     const user = await User.findOne({ uid: req.user.uid }).select("-_id -__v");
@@ -26,7 +24,6 @@ router.get("/profile", verifyFirebaseToken, async (req, res) => {
   }
 });
 
-// Get all properties (public route)
 router.get("/properties", async (req, res) => {
   try {
     const users = await User.find({}, "properties");
@@ -38,7 +35,6 @@ router.get("/properties", async (req, res) => {
   }
 });
 
-// Get current user's properties
 router.get("/my-properties", verifyFirebaseToken, async (req, res) => {
   try {
     const user = await User.findOne({ uid: req.user.uid }).select("properties");
@@ -50,7 +46,6 @@ router.get("/my-properties", verifyFirebaseToken, async (req, res) => {
   }
 });
 
-// Add property (owner only)
 router.post("/add-property", verifyFirebaseToken, async (req, res) => {
   try {
     const user = await User.findOne({ uid: req.user.uid });
@@ -68,7 +63,6 @@ router.post("/add-property", verifyFirebaseToken, async (req, res) => {
   }
 });
 
-// Update property (owner only)
 router.put("/update-property/:propertyId", verifyFirebaseToken, async (req, res) => {
   try {
     const { propertyId } = req.params;
@@ -92,7 +86,6 @@ router.put("/update-property/:propertyId", verifyFirebaseToken, async (req, res)
   }
 });
 
-// Delete property (owner only)
 router.delete("/delete-property/:propertyId", verifyFirebaseToken, async (req, res) => {
   try {
     const { propertyId } = req.params;
