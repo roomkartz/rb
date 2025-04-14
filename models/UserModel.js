@@ -18,7 +18,7 @@ const propertySchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   uid: { type: String, required: true, unique: true },
-  email: { type: String },
+  email: { type: String, sparse: true, unique: true },
   phoneNumber: { type: String },
   role: { type: String, enum: ['user', 'owner'], required: true },
   properties: [propertySchema],
