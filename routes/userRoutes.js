@@ -105,7 +105,8 @@ router.delete("/delete-property/:propertyId", verifyFirebaseToken, async (req, r
 });
 router.post("/owner", async (req, res) => {
   const { uid, phoneNumber, role } = req.body;
-
+  console.log("kavish");
+  
   try {
     // Check if already exists
     const existing = await User.findOne({ uid });
