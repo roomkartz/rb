@@ -103,33 +103,38 @@ router.delete("/delete-property/:propertyId", verifyFirebaseToken, async (req, r
     res.status(500).json({ error: "Failed to delete property" });
   }
 });
+
+// Unified signup/login for Firebase phone-based authentication
 router.post("/owner", async (req, res) => {
   const { uid, phoneNumber, role } = req.body;
-  console.log("kavish");
-  
+
+  if (!uid || !phoneNumber || role !== "owner") {
+    return res.status(400).json({ error: "Invalid owner data" });
+  }
+
   try {
-    // Check if already exists
-    const existing = await User.findOne({ uid });
-    if (existing) {
-      return res.status(200).json({ message: "Owner already exists", user: existing });
+    let user = await User.findOne({ uid });
+
+    // If user exists, treat as login
+    if (user) {
+      return res.status(200).json({ message: "Login successful", user });
     }
 
-    // Save new owner
-    const newOwner = new User({
+    // If not, create new user (signup)
+    user = new User({
       uid,
       phoneNumber,
-      role: role || "owner",
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      role: "owner",
+      properties: [],
     });
 
-    await newOwner.save();
+    await user.save();
 
-    res.status(201).json({ message: "Owner created", user: newOwner });
+    res.status(201).json({ message: "Signup successful", user });
   } catch (error) {
-    console.error("Failed to create owner:", error);
-    res.status(500).json({ error: "Failed to save owner" });
+    console.error("Error during owner login/signup:", error);
+    res.status(500).json({ error: "Server error during login/signup" });
   }
 });
+
 export default router;
